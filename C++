@@ -1,0 +1,125 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+vector<string> words = {
+    "PYTHON", "DEVELOPER", "GITHUB", "HANGMAN", "COMPUTER",
+    "KEYBOARD", "MONITOR", "INTERNET", "SOFTWARE", "HARDWARE"
+};
+
+string hangmanStages[] = {
+    R"(
+  ┌─────┐
+  │     │
+  │     O
+  │    /|\
+  │    / \
+  │
+)",
+    R"(
+  ┌─────┐
+  │     │
+  │     O
+  │    /|\
+  │    /
+  │
+)",
+    R"(
+  ┌─────┐
+  │     │
+  │     O
+  │    /|\
+  │
+  │
+)",
+    R"(
+  ┌─────┐
+  │     │
+  │     O
+  │    /|
+  │
+  │
+)",
+    R"(
+  ┌─────┐
+  │     │
+  │     O
+  │     │
+  │
+  │
+)",
+    R"(
+  ┌─────┐
+  │     │
+  │     O
+  │
+  │
+  │
+)",
+    R"(
+  ┌─────┐
+  │     │
+  │
+  │
+  │
+  │
+)",
+    R"(
+  ┌─────┐
+  │
+  │
+  │
+  │
+  │
+)"
+};
+
+int main() {
+    srand(time(0));
+    string word = words[rand() % words.size()];
+    string guessed(word.length(), '_');
+    string wrong = "";
+    int attempts = 7;
+
+    cout << "\n=== HANGMAN ===\n";
+
+    while (attempts > 0) {
+        cout << hangmanStages[attempts];
+        cout << "\nWord: ";
+        for (char c : guessed) cout << c << ' ';
+        cout << "\nWrong guesses: " << (wrong.empty() ? "None" : wrong) << "\n";
+        cout << "Guess a letter: ";
+        char guess;
+        cin >> guess;
+        guess = toupper(guess);
+
+        if (word.find(guess) != string::npos) {
+            for (size_t i = 0; i < word.length(); i++)
+                if (word[i] == guess) guessed[i] = guess;
+            cout << "Good guess!\n";
+            if (guessed == word) {
+                cout << "\n🎉 YOU WIN! Word was " << word << " 🎉\n";
+                break;
+            }
+        } else {
+            if (wrong.find(guess) == string::npos) {
+                wrong += guess;
+                wrong += ' ';
+                attempts--;
+                cout << "Wrong! " << attempts << " attempts left.\n";
+            } else {
+                cout << "You already guessed that.\n";
+            }
+        }
+        if (attempts == 0) {
+            cout << hangmanStages[0];
+            cout << "\n💀 GAME OVER! Word was " << word << " 💀\n";
+        }
+    }
+    return 0;
+}
